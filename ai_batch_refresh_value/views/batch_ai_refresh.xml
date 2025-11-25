@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Action -->
+    <record id="action_batch_ai_refresh" model="ir.actions.act_window">
+        <field name="name">AI Batch Refresh</field>
+        <field name="res_model">batch.ai.refresh</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Insert new menu BELOW "Default Prompts" inside AI → Configuration -->
+    <menuitem id="menu_batch_ai_refresh"
+          name="Batch AI Refresh"
+          parent="ai_app.ai_config_menu"
+          action="action_batch_ai_refresh"
+          sequence="40"/>
+
+    <!-- list (List) View -->
+    <record id="view_batch_ai_refresh_list" model="ir.ui.view">
+        <field name="name">batch.ai.refresh.list</field>
+        <field name="model">batch.ai.refresh</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="model_id"/>
+                <field name="refresh_ai_fields_ids"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_batch_ai_refresh_form" model="ir.ui.view">
+        <field name="name">batch.ai.refresh.form</field>
+        <field name="model">batch.ai.refresh</field>
+        <field name="arch" type="xml">
+            <form string="Batch AI Refresh">
+                <sheet>
+                    <group>
+                        <field name="model_id"/>
+                        <field name="refresh_ai_fields_domain" invisible="True"/>
+                        <field name="refresh_ai_fields_ids" domain="refresh_ai_fields_domain" widget="many2many_tags"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>
