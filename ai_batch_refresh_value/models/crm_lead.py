@@ -20,14 +20,15 @@ class CrmLead(models.Model):
 
         for record in self:
             for field in crm_lead_ai_config.refresh_ai_fields_ids:
-                if not record[field.name]:
+                if not record[field.field_id.name]:
                     try:
-                        result = record.get_ai_field_value(field.name, {})
-                        record[field.name] = result
+                        result = record.get_ai_field_value(field.field_id.name, {})
+                        record[field.field_id.name] = result
                     except Exception as e:
                         # Log error but continue processing remaining fields
                         _logger.error(
                             "AI refresh failed for field '%s' on record %s: %s",
-                            field.name, record.id, e
+                            field.field_id.name, record.id, e
                         )
                         continue
+
