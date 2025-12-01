@@ -24,6 +24,7 @@ class CrmLead(models.Model):
                     try:
                         result = record.get_ai_field_value(field.field_id.name, {})
                         record[field.field_id.name] = result
+                        self.env.cr.commit()
                     except Exception as e:
                         # Log error but continue processing remaining fields
                         _logger.error(
