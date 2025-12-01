@@ -9,6 +9,11 @@ class CrmLead(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        """
+        Override this method with context mail_create_nolog to avoid some fields being overriden by Odoo
+        :param vals_list:
+        :return:
+        """
         for vals in vals_list:
             if vals.get('website'):
                 vals['website'] = self.env['res.partner']._clean_website(vals['website'])
@@ -50,7 +55,7 @@ class CrmLead(models.Model):
                 "No AI configuration found for CRM Lead. "
                 "Please set it up under AI → Configuration → Batch AI Refresh."
             ))
-
+        self.env.cr.commit()
         for record in self:
             for field in crm_lead_ai_config.refresh_ai_fields_ids:
                 if not record[field.field_id.name]:
@@ -65,3 +70,4 @@ class CrmLead(models.Model):
                             field.field_id.name, record.id, e
                         )
                         continue
+
