@@ -55,14 +55,14 @@ class CrmLead(models.Model):
                 "No AI configuration found for CRM Lead. "
                 "Please set it up under AI → Configuration → Batch AI Refresh."
             ))
-        self.env.cr.commit()
+        # self.env.cr.commit()
         for record in self:
             for field in crm_lead_ai_config.refresh_ai_fields_ids:
                 if not record[field.field_id.name]:
                     try:
                         result = record.get_ai_field_value(field.field_id.name, {})
                         record[field.field_id.name] = result
-                        self.env.cr.commit()
+                        # self.env.cr.commit()
                     except Exception as e:
                         # Log error but continue processing remaining fields
                         _logger.error(
