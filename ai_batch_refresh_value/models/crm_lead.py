@@ -31,4 +31,3 @@ class CrmLead(models.Model):
                             field.name, record.id, e
                         )
                         continue
-
