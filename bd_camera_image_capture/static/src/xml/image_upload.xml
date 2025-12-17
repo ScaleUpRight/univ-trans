@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="bd_camera_image_capture.cameraField"
+       t-inherit="web.ImageField"
+       t-inherit-mode="extension">
+        <xpath expr="//button[hasclass('o_select_file_button')]"
+               position="after">
+            <button class="btn btn-light border-0 rounded-circle m-1 p-1 camera"
+                    data-tooltip="Camera"
+                    t-on-click="onFileCamera">
+                <img src="https://icons.iconarchive.com/icons/bootstrap/bootstrap/16/Bootstrap-camera-fill-icon.png"
+                     width="16" height="16"/>
+            </button>
+            <center>
+                <div id="myModal" class="modal" style="width:35%; height:58%;">
+                    <div class="modal-content">
+                        <header>
+                            <video id="videoCam" t-ref="video"></video>
+                        </header>
+                        <footer>
+                            <center>
+                                <button id="click_photo"
+                                        t-on-click="ImageCapture">
+                                    Capture
+                                </button>
+                                <button id="switch-camera"
+                                        t-on-click="SwitchCamera">
+                                    Switch Camera
+                                </button>
+
+                                <button id="stop-camera-button"
+                                        t-ref="stop-camera-button"
+                                        t-on-click="StopCamera">
+                                    Cancel
+                                </button>
+                            </center>
+                        </footer>
+                        <span hidden="hidden">
+                            <canvas id="canvas" width="150" height="100" t-ref="canvas"></canvas>
+                        </span>
+                    </div>
+                </div>
+            </center>
+        </xpath>
+    </t>
+</templates>
