@@ -6,8 +6,21 @@
         <field name="inherit_id" ref="crm.crm_lead_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='team_id']" position="after">
-                <field name="opportunity_file_id" readonly="1"/>
-                <field name="documents_folder_id" readonly="1"/>
+                <div colspan="2" class="d-flex">
+                    <div>
+                        <label for="documents_folder_id" string="Document Folder"/>
+                        <field name="documents_folder_id" class="oe_inline mx-1" readonly="1"
+                               options="{'no_open': True}" invisible="not documents_folder_id"/>
+                    </div>
+                    <button class="btn btn-link pt-0"
+                            type="object"
+                            name="action_open_documents">
+                        <i class="fa fa-external-link"/>
+                        Open
+                    </button>
+                </div>
+                                    <field name="documents_file_ids" widget="many2many_tags" readonly="1"/>
+
             </xpath>
         </field>
     </record>
@@ -17,9 +30,8 @@
         <field name="model">crm.lead</field>
         <field name="inherit_id" ref="crm.crm_case_tree_view_leads"/>
         <field name="arch" type="xml">
-            <!-- Add after Opportunity name -->
             <xpath expr="//field[@name='name']" position="after">
-                <field name="opportunity_file_id"/>
+                <field name="documents_folder_id"/>
             </xpath>
         </field>
     </record>

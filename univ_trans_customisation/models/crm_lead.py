@@ -4,18 +4,18 @@ from odoo import api, fields, models
 class CrmLead(models.Model):
     _inherit = "crm.lead"
 
-    opportunity_file_id = fields.Char(
-        string="Opportunity File ID",
-        readonly=True,
-        copy=False,
-        index=True,
-    )
-
     documents_folder_id = fields.Many2one(
         "documents.document",
         string="Documents Folder",
         readonly=True,
         copy=False,
+    )
+
+    documents_file_ids = fields.Many2many(
+        "documents.document",
+        string="Documents",
+        compute="_compute_documents_file_ids",
+        store=False,
     )
 
     _sql_constraints = [
@@ -26,47 +26,22 @@ class CrmLead(models.Model):
         )
     ]
 
-    # def _create_documents_folder(self):
-    #     Documents = self.env["documents.document"]
-    #
-    #     # Find or create root "Opportunities" folder
-    #     root = Documents.search([
-    #         ("type", "=", "folder"),
-    #         ("name", "=", "Opportunities")
-    #     ], limit=1)
-    #
-    #     if not root:
-    #         root = Documents.create({
-    #             "name": "Opportunities",
-    #             "type": "folder",
-    #         })
-    #
-    #     for lead in self:
-    #         if lead.documents_folder_id:
-    #             continue
-    #
-    #         if not lead.opportunity_file_id:
-    #             continue
-    #
-    #         folder = Documents.create({
-    #             "name": lead.opportunity_file_id,
-    #             "type": "folder",
-    #             "folder_id": root.id,
-    #             "res_model": "crm.lead",
-    #             "res_id": lead.id,
-    #         })
-    #
-    #         lead.documents_folder_id = folder.id
-    #
-    #
-    # @api.model_create_multi
-    # def create(self, vals_list):
-    #     for vals in vals_list:
-    #         if not vals.get("opportunity_file_id"):
-    #             vals["opportunity_file_id"] = self.env["ir.sequence"].next_by_code(
-    #                 "crm.lead.opportunity.file"
-    #             ) or "/"
-    #     records = super().create(vals_list)
-    #     for record in records:
-    #         record._create_documents_folder()
-    #     return records
+    def action_open_documents(self):
+        self.ensure_one()
+
+        return {
+            'type': 'ir.actions.act_url',
+            'url': self.documents_folder_id.access_url,
+            'target': 'new',
+        }
+
+    def _compute_documents_file_ids(self):
+        Documents = self.env["documents.document"]
+        for lead in self:
+            if lead.documents_folder_id:
+                lead.documents_file_ids = Documents.search([
+                    ("folder_id", "=", lead.documents_folder_id.id),
+                    ("type", "=", "binary"),
+                ])
+            else:
+                lead.documents_file_ids = False
