@@ -4,6 +4,13 @@ from odoo import api, fields, models
 class CrmLead(models.Model):
     _inherit = "crm.lead"
 
+    opportunity_file_id = fields.Char(
+        string="Opportunity File ID",
+        readonly=True,
+        copy=False,
+        index=True,
+    )
+
     documents_folder_id = fields.Many2one(
         "documents.document",
         string="Documents Folder",
