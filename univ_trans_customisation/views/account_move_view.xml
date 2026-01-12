@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="view_crm_lead_form_inherit_file_id" model="ir.ui.view">
-        <field name="name">crm.lead.form.file.id</field>
-        <field name="model">crm.lead</field>
-        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+    <record id="view_move_form_inherit_documents" model="ir.ui.view">
+        <field name="name">account.move.form.documents</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='user_id']" position="after">
-<!--                <field name="opportunity_file_id" readonly="1"/>-->
+            <xpath expr="//field[@name='invoice_date']" position="after">
                 <div colspan="2" class="d-flex">
                     <div>
                         <label for="documents_folder_id" string="Document Folder"/>
@@ -21,17 +20,6 @@
                     </button>
                 </div>
                 <field name="documents_file_ids" widget="many2many_tags" readonly="1"/>
-            </xpath>
-        </field>
-    </record>
-
-    <record id="view_crm_lead_tree_inherit_file_id" model="ir.ui.view">
-        <field name="name">crm.lead.tree.file.id</field>
-        <field name="model">crm.lead</field>
-        <field name="inherit_id" ref="crm.crm_case_tree_view_leads"/>
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='name']" position="after">
-                <field name="documents_folder_id"/>
             </xpath>
         </field>
     </record>
