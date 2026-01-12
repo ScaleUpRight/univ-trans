@@ -8,7 +8,7 @@
             <xpath expr="//field[@name='user_id']" position="after">
                 <div colspan="2" class="d-flex">
                     <div>
-<!--                        <field name="opportunity_file_id" readonly="1"/>-->
+                        <field name="opportunity_file_id" readonly="1"/>
                         <label for="documents_folder_id" string="Document Folder"/>
                         <field name="documents_folder_id" class="oe_inline mx-1" readonly="1"
                                options="{'no_open': True}" invisible="not documents_folder_id"/>
@@ -20,8 +20,7 @@
                         Open
                     </button>
                 </div>
-                                    <field name="documents_file_ids" widget="many2many_tags" readonly="1"/>
-
+                <field name="documents_file_ids" widget="many2many_tags" readonly="1"/>
             </xpath>
         </field>
     </record>
