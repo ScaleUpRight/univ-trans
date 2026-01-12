@@ -52,3 +52,11 @@ class CrmLead(models.Model):
                 ])
             else:
                 lead.documents_file_ids = False
+
+    def _prepare_opportunity_quotation_context(self):
+        ctx = super()._prepare_opportunity_quotation_context()
+
+        if self.documents_folder_id:
+            ctx["default_documents_folder_id"] = self.documents_folder_id.id
+
+        return ctx
