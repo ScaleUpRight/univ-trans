@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="documents_tag_surveys" model="documents.tag" forcecreate="0">
+        <field name="name">Surveys</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="documents_tag_packing_inventory" model="documents.tag" forcecreate="0">
+        <field name="name">Packing &amp; Inventory</field>
+        <field name="sequence">21</field>
+    </record>
+
+    <record id="documents_tag_customs" model="documents.tag" forcecreate="0">
+        <field name="name">Customs</field>
+        <field name="sequence">22</field>
+    </record>
+
+    <record id="documents_tag_transport" model="documents.tag" forcecreate="0">
+        <field name="name">Transport</field>
+        <field name="sequence">23</field>
+    </record>
+
+    <record id="documents_tag_insurance" model="documents.tag" forcecreate="0">
+        <field name="name">Insurance</field>
+        <field name="sequence">24</field>
+    </record>
+
+    <record id="documents_tag_financials" model="documents.tag" forcecreate="0">
+        <field name="name">Financials</field>
+        <field name="sequence">25</field>
+    </record>
+
+    <record id="documents_tag_claims" model="documents.tag" forcecreate="0">
+        <field name="name">Claims</field>
+        <field name="sequence">26</field>
+    </record>
+
+</odoo>

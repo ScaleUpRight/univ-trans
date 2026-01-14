@@ -8,6 +8,7 @@
     "depends": ["crm", "sale", "account"],
     "data": [
         "data/sequence.xml",
+        "data/documents_tag.xml",
         "views/crm_lead_view.xml",
         "views/sale_order_view.xml",
         "views/account_move_view.xml",
