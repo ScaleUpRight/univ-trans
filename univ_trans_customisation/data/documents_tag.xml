@@ -11,11 +11,6 @@
         <field name="sequence">21</field>
     </record>
 
-<!--    <record id="documents_tag_customs" model="documents.tag" forcecreate="0">-->
-<!--        <field name="name">Customs</field>-->
-<!--        <field name="sequence">22</field>-->
-<!--    </record>-->
-
     <record id="documents_tag_transport" model="documents.tag" forcecreate="0">
         <field name="name">Transport</field>
         <field name="sequence">23</field>
