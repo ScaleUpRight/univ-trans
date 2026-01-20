@@ -25,7 +25,7 @@ class SaleOrder(models.Model):
     x_studio_service_scope = fields.Selection(related='opportunity_id.x_studio_service_scope')
     x_studio_shipment_direction = fields.Selection(related='opportunity_id.x_studio_shipment_direction')
     x_studio_moving_from_country = fields.Char(related='opportunity_id.x_studio_moving_from_country')
-    x_studio_moving_from_street = fields.Char(related='opportunity_id.x_studio_move_from_street')
+    x_studio_moving_from_street_1 = fields.Char(related='opportunity_id.x_studio_move_from_street')
     x_studio_move_to_country = fields.Char(related='opportunity_id.x_studio_move_to_country')
 
     def _compute_documents_file_ids(self):
