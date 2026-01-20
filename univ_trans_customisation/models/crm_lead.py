@@ -25,6 +25,8 @@ class CrmLead(models.Model):
         store=False,
     )
 
+    x_v18_opportunity_id = fields.Integer("V18 Opportunity ID", readonly=True)
+
     _sql_constraints = [
         (
             "unique_opportunity_file_id",
