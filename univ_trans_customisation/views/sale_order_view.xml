@@ -23,6 +23,7 @@
                 </div>
 
                 <field name="documents_file_ids" widget="many2many_tags" readonly="1"/>
+                <field name="opportunity_id" readonly="1"/>
             </xpath>
 
         </field>
