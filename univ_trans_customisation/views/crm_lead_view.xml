@@ -6,7 +6,8 @@
         <field name="inherit_id" ref="crm.crm_lead_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='user_id']" position="after">
-<!--                <field name="opportunity_file_id" readonly="1"/>-->
+                <field name="opportunity_file_id" readonly="1"/>
+                <field name="x_v18_opportunity_id" readonly="1"/>
                 <div colspan="2" class="d-flex">
                     <div>
                         <label for="documents_folder_id" string="Document Folder"/>
