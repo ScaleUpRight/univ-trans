@@ -1,4 +1,4 @@
-from odoo import fields, models
+from odoo import fields, models, api
 
 
 class SaleOrder(models.Model):
@@ -23,10 +23,30 @@ class SaleOrder(models.Model):
     x_studio_freight = fields.Boolean(related='opportunity_id.x_studio_freight')
     x_studio_origin = fields.Boolean(related='opportunity_id.x_studio_origin')
     x_studio_service_scope = fields.Selection(related='opportunity_id.x_studio_service_scope')
-    x_studio_shipment_direction = fields.Selection(related='opportunity_id.x_studio_shipment_direction')
-    x_studio_moving_from_country = fields.Char(related='opportunity_id.x_studio_moving_from_country')
-    x_studio_moving_from_street_1 = fields.Char(related='opportunity_id.x_studio_move_from_street')
-    x_studio_move_to_country = fields.Char(related='opportunity_id.x_studio_move_to_country')
+    x_studio_shipment_direction = fields.Char(compute='_compute_x_studio_shipment_direction')
+    x_studio_moving_from_country = fields.Char(compute='_compute_x_studio_moving_from_country')
+    x_studio_moving_from_street_1 = fields.Char(compute='_compute_x_studio_moving_from_street_1')
+    x_studio_move_to_country = fields.Char(compute='_compute_x_studio_move_to_country')
+
+    @api.depends('opportunity_id.x_studio_moving_from_country')
+    def _compute_x_studio_moving_from_country(self):
+        for order in self:
+            order.x_studio_moving_from_country = order.opportunity_id.x_studio_moving_from_country
+
+    @api.depends('opportunity_id.x_studio_move_from_street')
+    def _compute_x_studio_moving_from_street_1(self):
+        for order in self:
+            order.x_studio_moving_from_street_1 = order.opportunity_id.x_studio_move_from_street
+
+    @api.depends('opportunity_id.x_studio_move_to_country')
+    def _compute_x_studio_move_to_country(self):
+        for order in self:
+            order.x_studio_move_to_country = order.opportunity_id.x_studio_move_to_country
+
+    @api.depends('opportunity_id.x_studio_shipment_direction')
+    def _compute_x_studio_shipment_direction(self):
+        for order in self:
+            order.x_studio_shipment_direction = order.opportunity_id.x_studio_shipment_direction
 
     def _compute_documents_file_ids(self):
         Documents = self.env["documents.document"]
