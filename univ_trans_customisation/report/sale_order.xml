@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_saleorder_clone_info_block" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//div[@id='informations']" position="before">
+
+            <div class="row mb-4" id="informations">
+                <div class="col-6">
+
+                    <div t-if="doc.x_studio_moving_from_country or doc.opportunity_id.x_studio_moving_from_city" class="mb-2">
+                        <strong>Origin</strong><br/>
+                        <span t-esc="doc.opportunity_id.x_studio_moving_from_city + ', ' + doc.x_studio_moving_from_country"/>
+                    </div>
+
+                    <div t-if="doc.opportunity_id.x_studio_commodity" class="mb-1">
+                        <strong>Commodity</strong><br/>
+                        <span t-field="doc.opportunity_id.x_studio_commodity"/>
+                    </div>
+
+                    <div t-if="doc.x_studio_service_scope" class="mb-1">
+                        <strong>Service Type</strong><br/>
+                        <span t-field="doc.x_studio_service_scope"/>
+                    </div>
+
+                    <div t-if="doc.x_studio_estimated_volume" class="mb-2">
+                        <strong>Estimated Volume</strong><br/>
+                        <span t-field="doc.x_studio_estimated_volume"/>
+                    </div>
+
+                    <div t-if="doc.x_studio_shipment_direction" class="mb-2">
+                        <strong>Shipment Mode</strong><br/>
+                        <span t-field="doc.x_studio_shipment_direction"/>
+                    </div>
+
+                </div>
+
+                <!-- RIGHT COLUMN -->
+                <div class="col-6">
+
+                    <div t-if="doc.x_studio_move_to_country or doc.opportunity_id.x_studio_move_to_city" class="mb-2">
+                        <strong>Destination</strong><br/>
+                        <span t-esc="doc.opportunity_id.x_studio_move_to_city + ', ' + doc.x_studio_move_to_country"/>
+                    </div>
+
+                    <div t-if="doc.x_studio_freight_mode" class="mb-2">
+                        <strong>Freight Mode</strong><br/>
+                        <span t-field="doc.x_studio_freight_mode"/>
+                    </div>
+
+                    <div t-if="doc.x_studio_estimated_transit_time" class="mb-2">
+                        <strong>Transit Time</strong><br/>
+                        <span t-field="doc.x_studio_estimated_transit_time"/>
+                    </div>
+
+                    <div t-if="doc.x_studio_size" class="mb-2">
+                        <strong>Size</strong><br/>
+                        <span t-field="doc.x_studio_size"/>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>
