@@ -5,44 +5,43 @@
             <div class="row mb-4" id="informations">
                 <div class="col-6">
                     <div t-if="doc.x_studio_moving_from_country or doc.opportunity_id.x_studio_moving_from_city" class="mb-2">
-                        <strong>Origin</strong><br/>
-                        <span t-esc="doc.opportunity_id.x_studio_moving_from_city + ', ' + doc.x_studio_moving_from_country"/>
+                        <strong>Origin:</strong>
+                        <span t-esc="(doc.opportunity_id.x_studio_moving_from_city or '') + (', ' if doc.opportunity_id.x_studio_moving_from_city and doc.x_studio_moving_from_country else '') + (doc.x_studio_moving_from_country or '')"/>
                     </div>
                     <div t-if="doc.opportunity_id.x_studio_commodity" class="mb-1">
-                        <strong>Commodity</strong><br/>
+                        <strong>Commodity:</strong>
                         <span t-field="doc.opportunity_id.x_studio_commodity"/>
                     </div>
                     <div t-if="doc.x_studio_service_scope" class="mb-1">
-                        <strong>Service Type</strong><br/>
+                        <strong>Service Type:</strong>
                         <span t-field="doc.x_studio_service_scope"/>
                     </div>
                     <div t-if="doc.x_studio_estimated_volume" class="mb-2">
-                        <strong>Estimated Volume</strong><br/>
+                        <strong>Estimated Volume:</strong>
                         <span t-field="doc.x_studio_estimated_volume"/>
                     </div>
                     <div t-if="doc.x_studio_shipment_direction" class="mb-2">
-                        <strong>Shipment Mode</strong><br/>
+                        <strong>Shipment Mode:</strong>
                         <span t-field="doc.x_studio_shipment_direction"/>
                     </div>
-
                 </div>
 
                 <!-- RIGHT COLUMN -->
                 <div class="col-6">
                     <div t-if="doc.x_studio_move_to_country or doc.opportunity_id.x_studio_move_to_city" class="mb-2">
-                        <strong>Destination</strong><br/>
-                        <span t-esc="doc.opportunity_id.x_studio_move_to_city + ', ' + doc.x_studio_move_to_country"/>
+                        <strong>Destination:</strong>
+                        <span t-esc="(doc.opportunity_id.x_studio_move_to_city or '') + (', ' if doc.opportunity_id.x_studio_move_to_city and doc.x_studio_move_to_country else '') + (doc.x_studio_move_to_country or '')"/>
                     </div>
                     <div t-if="doc.x_studio_freight_mode" class="mb-2">
-                        <strong>Freight Mode</strong><br/>
+                        <strong>Freight Mode:</strong>
                         <span t-field="doc.x_studio_freight_mode"/>
                     </div>
                     <div t-if="doc.x_studio_estimated_transit_time" class="mb-2">
-                        <strong>Transit Time</strong><br/>
+                        <strong>Transit Time:</strong>
                         <span t-field="doc.x_studio_estimated_transit_time"/>
                     </div>
                     <div t-if="doc.x_studio_size" class="mb-2">
-                        <strong>Size</strong><br/>
+                        <strong>Size:</strong>
                         <span t-field="doc.x_studio_size"/>
                     </div>
                 </div>
