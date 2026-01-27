@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="report_saleorder_clone_info_block" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//t[@t-set='layout_document_title']" position="replace">
+            <t t-set="layout_document_title">
+                <span t-if="is_proforma">Pro-Forma Invoice # </span>
+                <span t-elif="doc.state in ['draft','sent']">Quotation # </span>
+                <span t-else="">Order # </span>
+                <span t-field="doc.name">SO0000</span>
+                <br/>
+                <t t-if="doc.opportunity_id.opportunity_file_id">
+                    <span style="font-size: 20px;">
+                    Opportunity ID:
+                    </span>
+                    <span style="font-size: 20px;" t-esc="doc.opportunity_id.opportunity_file_id"/>
+                </t>
+            </t>
+        </xpath>
+
         <xpath expr="//div[@id='informations']" position="before">
             <div class="row mb-4" id="informations">
                 <div class="col-6">
@@ -12,13 +28,13 @@
                         <strong>Commodity:</strong>
                         <span t-field="doc.opportunity_id.x_studio_commodity"/>
                     </div>
-                    <div t-if="doc.x_studio_service_scope" class="mb-1">
-                        <strong>Service Type:</strong>
-                        <span t-field="doc.x_studio_service_scope"/>
-                    </div>
                     <div t-if="doc.x_studio_estimated_volume" class="mb-2">
                         <strong>Estimated Volume:</strong>
                         <span t-field="doc.x_studio_estimated_volume"/>
+                    </div>
+                    <div t-if="doc.x_studio_service_scope" class="mb-1">
+                        <strong>Service Type:</strong>
+                        <span t-field="doc.x_studio_service_scope"/>
                     </div>
                     <div t-if="doc.x_studio_shipment_direction" class="mb-2">
                         <strong>Shipment Mode:</strong>
@@ -32,13 +48,13 @@
                         <strong>Destination:</strong>
                         <span t-esc="(doc.opportunity_id.x_studio_move_to_city or '') + (', ' if doc.opportunity_id.x_studio_move_to_city and doc.x_studio_move_to_country else '') + (doc.x_studio_move_to_country or '')"/>
                     </div>
-                    <div t-if="doc.x_studio_freight_mode" class="mb-2">
-                        <strong>Freight Mode:</strong>
-                        <span t-field="doc.x_studio_freight_mode"/>
-                    </div>
                     <div t-if="doc.x_studio_estimated_transit_time" class="mb-2">
                         <strong>Transit Time:</strong>
                         <span t-field="doc.x_studio_estimated_transit_time"/>
+                    </div>
+                    <div t-if="doc.x_studio_freight_mode" class="mb-2">
+                        <strong>Freight Mode:</strong>
+                        <span t-field="doc.x_studio_freight_mode"/>
                     </div>
                     <div t-if="doc.x_studio_size" class="mb-2">
                         <strong>Size:</strong>
