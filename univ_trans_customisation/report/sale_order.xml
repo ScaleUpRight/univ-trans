@@ -36,6 +36,10 @@
                         <strong>Service Type:</strong>
                         <span t-field="doc.x_studio_service_scope"/>
                     </div>
+                    <div t-if="doc.x_studio_estimated_weight" class="mb-1">
+                        <strong>Estimated Weight:</strong>
+                        <span t-field="doc.x_studio_estimated_weight"/>
+                    </div>
                     <div t-if="doc.x_studio_shipment_direction" class="mb-2">
                         <strong>Shipment Mode:</strong>
                         <span t-field="doc.x_studio_shipment_direction"/>
@@ -62,6 +66,9 @@
                     </div>
                 </div>
             </div>
+        </xpath>
+
+        <xpath expr="//div[@name='so_total_summary']" position="replace">
         </xpath>
     </template>
 </odoo>
