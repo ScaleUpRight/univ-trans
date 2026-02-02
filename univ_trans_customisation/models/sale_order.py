@@ -19,7 +19,7 @@ class SaleOrder(models.Model):
     )
 
     is_opportunity_fields_editable = fields.Boolean(
-        compute="_compute_is_opportunity_fields_editable"
+        compute="_compute_is_opportunity_fields_editable", strore=True
     )
 
     @api.depends('sale_order_template_id')
@@ -33,14 +33,53 @@ class SaleOrder(models.Model):
     x_studio_booker_type = fields.Selection(related='opportunity_id.x_studio_booker_type', readonly=False)
     x_studio_service_scope = fields.Selection(related='opportunity_id.x_studio_service_scope', readonly=False)
     x_studio_freight_mode = fields.Selection(related='opportunity_id.x_studio_freight_mode', readonly=False)
-    x_studio_size = fields.Selection(related='opportunity_id.x_studio_freight_mode', readonly=False)
-    x_studio_destination = fields.Boolean(related='opportunity_id.x_studio_destination')
-    x_studio_freight = fields.Boolean(related='opportunity_id.x_studio_freight')
-    x_studio_origin = fields.Boolean(related='opportunity_id.x_studio_origin')
+    x_studio_size = fields.Selection(related='opportunity_id.x_studio_size', readonly=False)
+    x_studio_destination = fields.Boolean(compute='_compute_x_studio_destination', store=True)
+    x_studio_freight = fields.Boolean(compute='_compute_x_studio_freight', store=True)
+    x_studio_origin = fields.Boolean(compute='_compute_x_studio_origin', store=True)
     x_studio_shipment_direction = fields.Char(compute='_compute_x_studio_shipment_direction', readonly=False)
     x_studio_moving_from_country = fields.Char(compute='_compute_x_studio_moving_from_country', readonly=False)
     x_studio_moving_from_street_1 = fields.Char(compute='_compute_x_studio_moving_from_street_1')
     x_studio_move_to_country = fields.Char(compute='_compute_x_studio_move_to_country', readonly=False)
+
+    @api.depends('x_studio_service_scope', 'opportunity_id.x_studio_destination')
+    def _compute_x_studio_destination(self):
+        for order in self:
+            if order.opportunity_id.x_studio_destination:
+                order.x_studio_destination = order.opportunity_id.x_studio_destination
+            else:
+                scope = order.x_studio_service_scope
+                order.x_studio_destination = scope in (
+                    'door_to_door',
+                    'port_to_door',
+                )
+
+    @api.depends('x_studio_service_scope', 'opportunity_id.x_studio_freight')
+    def _compute_x_studio_freight(self):
+        for order in self:
+            if order.opportunity_id.x_studio_freight:
+                order.x_studio_freight = order.opportunity_id.x_studio_freight
+            else:
+                scope = order.x_studio_service_scope
+                order.x_studio_freight = scope in (
+                    'door_to_door',
+                    'door_to_port_destination',
+                    'port_to_door',
+                    'port_to_port',
+                )
+
+    @api.depends('x_studio_service_scope', 'opportunity_id.x_studio_origin')
+    def _compute_x_studio_origin(self):
+        for order in self:
+            if order.opportunity_id.x_studio_origin:
+                order.x_studio_origin = order.opportunity_id.x_studio_origin
+            else:
+                scope = order.x_studio_service_scope
+                order.x_studio_origin = scope in (
+                    'door_to_door',
+                    'door_to_port_destination',
+                    'door_to_port_origin',
+                )
 
     @api.depends('opportunity_id.x_studio_moving_from_country')
     def _compute_x_studio_moving_from_country(self):
