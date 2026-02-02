@@ -18,15 +18,29 @@ class SaleOrder(models.Model):
         store=False,
     )
 
-    x_studio_booker_type = fields.Selection(related='opportunity_id.x_studio_booker_type')
+    is_opportunity_fields_editable = fields.Boolean(
+        compute="_compute_is_opportunity_fields_editable"
+    )
+
+    @api.depends('sale_order_template_id')
+    def _compute_is_opportunity_fields_editable(self):
+        for order in self:
+            order.is_opportunity_fields_editable = (
+                    order.sale_order_template_id
+                    and order.sale_order_template_id.name in ['Quote Art', 'Quote Commercial']
+            )
+
+    x_studio_booker_type = fields.Selection(related='opportunity_id.x_studio_booker_type', readonly=False)
+    x_studio_service_scope = fields.Selection(related='opportunity_id.x_studio_service_scope', readonly=False)
+    x_studio_freight_mode = fields.Selection(related='opportunity_id.x_studio_freight_mode', readonly=False)
+    x_studio_size = fields.Selection(related='opportunity_id.x_studio_freight_mode', readonly=False)
     x_studio_destination = fields.Boolean(related='opportunity_id.x_studio_destination')
     x_studio_freight = fields.Boolean(related='opportunity_id.x_studio_freight')
     x_studio_origin = fields.Boolean(related='opportunity_id.x_studio_origin')
-    x_studio_service_scope = fields.Selection(related='opportunity_id.x_studio_service_scope')
-    x_studio_shipment_direction = fields.Char(compute='_compute_x_studio_shipment_direction')
-    x_studio_moving_from_country = fields.Char(compute='_compute_x_studio_moving_from_country')
+    x_studio_shipment_direction = fields.Char(compute='_compute_x_studio_shipment_direction', readonly=False)
+    x_studio_moving_from_country = fields.Char(compute='_compute_x_studio_moving_from_country', readonly=False)
     x_studio_moving_from_street_1 = fields.Char(compute='_compute_x_studio_moving_from_street_1')
-    x_studio_move_to_country = fields.Char(compute='_compute_x_studio_move_to_country')
+    x_studio_move_to_country = fields.Char(compute='_compute_x_studio_move_to_country', readonly=False)
 
     @api.depends('opportunity_id.x_studio_moving_from_country')
     def _compute_x_studio_moving_from_country(self):
