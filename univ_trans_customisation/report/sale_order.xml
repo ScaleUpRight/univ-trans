@@ -69,6 +69,21 @@
         </xpath>
 
         <xpath expr="//div[@name='so_total_summary']" position="replace">
+            <t t-if="doc.is_opportunity_fields_editable">
+                <div class="clearfix" name="so_total_summary">
+                    <div id="total" class="row mt-n3" name="total">
+                        <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ms-auto">
+                            <table class="o_total_table table table-borderless">
+                                <!-- Tax totals -->
+                                <t t-call="sale.document_tax_totals">
+                                    <t t-set="tax_totals" t-value="doc.tax_totals"/>
+                                    <t t-set="currency" t-value="doc.currency_id"/>
+                                </t>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </t>
         </xpath>
     </template>
 </odoo>
