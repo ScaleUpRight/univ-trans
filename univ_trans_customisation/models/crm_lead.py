@@ -62,3 +62,43 @@ class CrmLead(models.Model):
             ctx["default_documents_folder_id"] = self.documents_folder_id.id
 
         return ctx
+
+    def create_documents_folder(self):
+        document = self.env["documents.document"]
+
+        # Find or create root "Opportunities" folder
+        root = document.search([
+            ("type", "=", "folder"),
+            ("name", "=", "Opportunities")
+        ], limit=1)
+
+        if not root:
+            root = document.create({
+                "name": "Opportunities",
+                "type": "folder",
+            })
+
+        for opp in self:
+            if opp.documents_folder_id:
+                continue
+
+            if not opp.opportunity_file_id:
+                opp.opportunity_file_id = self.env["ir.sequence"].next_by_code(
+                    "crm.lead.opportunity.file"
+                ) or "/"
+
+            folder = document.create({
+                "name": opp.opportunity_file_id,
+                "type": "folder",
+                "folder_id": root.id,
+                "res_model": "crm.lead",
+                "res_id": opp.id,
+            })
+
+            opp.documents_folder_id = folder.id
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        leads = super().create(vals_list)
+        leads.create_documents_folder()
+        return leads
