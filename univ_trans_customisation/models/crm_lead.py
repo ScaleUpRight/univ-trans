@@ -93,6 +93,7 @@ class CrmLead(models.Model):
                 "folder_id": root.id,
                 "res_model": "crm.lead",
                 "res_id": opp.id,
+                "alias_name": opp.opportunity_file_id,
             })
 
             opp.documents_folder_id = folder.id
