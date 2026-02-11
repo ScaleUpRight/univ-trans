@@ -30,17 +30,17 @@ class SaleOrder(models.Model):
                     and order.sale_order_template_id.name in ['Quote Art', 'Quote Commercial']
             )
 
-    x_studio_booker_type = fields.Selection(related='opportunity_id.x_studio_booker_type', readonly=False)
-    x_studio_service_scope = fields.Selection(related='opportunity_id.x_studio_service_scope', readonly=False)
-    x_studio_freight_mode = fields.Selection(related='opportunity_id.x_studio_freight_mode', readonly=False)
-    x_studio_size = fields.Selection(related='opportunity_id.x_studio_size', readonly=False)
+    x_studio_booker_type = fields.Selection(related='opportunity_id.x_studio_booker_type', readonly=False, store=True)
+    x_studio_service_scope = fields.Selection(related='opportunity_id.x_studio_service_scope', readonly=False, store=True)
+    x_studio_freight_mode = fields.Selection(related='opportunity_id.x_studio_freight_mode', readonly=False, store=True)
+    x_studio_size = fields.Selection(related='opportunity_id.x_studio_size', readonly=False, store=True)
     x_studio_destination = fields.Boolean(compute='_compute_x_studio_destination', store=True, string="Destination")
     x_studio_freight = fields.Boolean(compute='_compute_x_studio_freight', store=True, string="Freight")
     x_studio_origin = fields.Boolean(compute='_compute_x_studio_origin', store=True, string="Origin")
-    x_studio_shipment_direction = fields.Char(compute='_compute_x_studio_shipment_direction', readonly=False)
-    x_studio_moving_from_country = fields.Char(compute='_compute_x_studio_moving_from_country', readonly=False)
-    x_studio_moving_from_street_1 = fields.Char(compute='_compute_x_studio_moving_from_street_1')
-    x_studio_move_to_country = fields.Char(compute='_compute_x_studio_move_to_country', readonly=False)
+    x_studio_shipment_direction = fields.Char(compute='_compute_x_studio_shipment_direction', readonly=False, store=True)
+    x_studio_moving_from_country = fields.Char(compute='_compute_x_studio_moving_from_country', readonly=False, store=True)
+    x_studio_moving_from_street_1 = fields.Char(compute='_compute_x_studio_moving_from_street_1', store=True)
+    x_studio_move_to_country = fields.Char(compute='_compute_x_studio_move_to_country', readonly=False, store=True)
 
     @api.depends('x_studio_service_scope', 'opportunity_id.x_studio_destination')
     def _compute_x_studio_destination(self):
