@@ -126,5 +126,5 @@ class CrmLead(models.Model):
     def create(self, vals_list):
         leads = super().create(vals_list)
         leads.create_documents_folder()
-        leads._send_to_external_api()
+        # leads._send_to_external_api()
         return leads
