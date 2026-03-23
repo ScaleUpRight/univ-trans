@@ -125,3 +125,16 @@ class SaleOrder(models.Model):
         if self.documents_folder_id:
             vals["documents_folder_id"] = self.documents_folder_id.id
         return vals
+
+    @api.onchange('sale_order_template_id')
+    def _onchange_sale_order_template_id_quotes(self):
+        if self.sale_order_template_id:
+            # 1. Grab all IDs from the template (Headers AND Footers)
+            template_docs = self.sale_order_template_id.quotation_document_ids.ids
+
+            if template_docs:
+                # 2. Use Command.set (which is code 6) to select the whole list
+                # This prevents the "only 1 selected" issue
+                self.quotation_document_ids = [fields.Command.set(template_docs)]
+            else:
+                self.quotation_document_ids = [fields.Command.clear()]

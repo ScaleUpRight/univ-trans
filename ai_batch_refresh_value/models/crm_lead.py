@@ -70,4 +70,3 @@ class CrmLead(models.Model):
                             field.field_id.name, record.id, e
                         )
                         continue
-

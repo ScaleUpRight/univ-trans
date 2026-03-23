@@ -1,5 +1,8 @@
+import requests
 from odoo import api, fields, models
+import logging
 
+_logger = logging.getLogger(__name__)
 
 class CrmLead(models.Model):
     _inherit = "crm.lead"
@@ -98,8 +101,30 @@ class CrmLead(models.Model):
 
             opp.documents_folder_id = folder.id
 
+    def _send_to_external_api(self):
+        url = "https://univers-transit-dashboard.vercel.app/api/trigger-call"
+        headers = {
+            "Content-Type": "application/json"
+        }
+
+        for lead in self:
+            payload = {
+                "name": lead.partner_id.name,
+                "phone_number": lead.phone,
+                "email": lead.email_from ,
+                "origin": lead.city,
+                "destination": ""
+            }
+
+            try:
+                response = requests.post(url, json=payload, headers=headers, timeout=5)
+                _logger.info(f"API Response for Lead {lead.id}: {response.status_code} - {response.text}")
+            except Exception as e:
+                _logger.error(f"API Call Failed for Lead {lead.id}: {str(e)}")
+
     @api.model_create_multi
     def create(self, vals_list):
         leads = super().create(vals_list)
         leads.create_documents_folder()
+        leads._send_to_external_api()
         return leads
