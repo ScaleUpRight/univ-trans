@@ -122,6 +122,7 @@ class CrmLead(models.Model):
                 "odoo_lead_id": lead.id if lead.type == 'lead' else False,
                 "opportunity_file_id": lead.id if lead.type == 'opportunity' else False
             }
+            _logger.info(f"Voice AI API payload: {payload}")
             try:
                 response = requests.post(url, json=payload, headers=headers, timeout=5)
                 _logger.info(f"API Response for Lead {lead.id}: {response.status_code} - {response.text}")
