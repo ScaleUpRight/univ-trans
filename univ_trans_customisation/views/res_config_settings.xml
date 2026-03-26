@@ -1,0 +1,18 @@
+<!-- views/res_config_settings.xml -->
+
+<odoo>
+    <record id="view_res_config_settings_inherit_webhook" model="ir.ui.view">
+        <field name="name">res.config.settings.webhook</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="crm.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//app[@name='crm']/block[1]" position="inside">
+                <setting string="AI Voice Integration Env">
+                    <field name="ai_voice_integration_env"/>
+                </setting>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

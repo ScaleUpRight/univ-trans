@@ -1,6 +1,7 @@
 import requests
 from odoo import api, fields, models
 import logging
+from odoo.http import request
 
 _logger = logging.getLogger(__name__)
 
@@ -103,19 +104,24 @@ class CrmLead(models.Model):
 
     def _send_to_external_api(self):
         url = "https://univers-transit-dashboard.vercel.app/api/trigger-call"
+
         headers = {
             "Content-Type": "application/json"
         }
 
         for lead in self:
-            payload = {
-                "name": lead.partner_id.name,
-                "phone_number": lead.phone,
-                "email": lead.email_from ,
-                "origin": lead.city,
-                "destination": ""
-            }
+            name = lead.contact_name or lead.x_studio_full_name_from_lead or lead.partner_id.name or lead.name
+            env_mode = request.env['ir.config_parameter'].sudo().get_param('lead_webhook.env', 'test')
 
+            payload = {
+                "name": name if env_mode == 'prod' else "Test",
+                "phone_number": lead.x_studio_phone_from_lead,
+                "email": lead.x_studio_email_from_lead ,
+                "origin": lead.x_studio_moving_from_city,
+                "destination": lead.x_studio_move_to_city ,
+                "odoo_lead_id": lead.id if lead.type == 'lead' else False,
+                "opportunity_file_id": lead.id if lead.type == 'opportunity' else False
+            }
             try:
                 response = requests.post(url, json=payload, headers=headers, timeout=5)
                 _logger.info(f"API Response for Lead {lead.id}: {response.status_code} - {response.text}")
@@ -126,5 +132,5 @@ class CrmLead(models.Model):
     def create(self, vals_list):
         leads = super().create(vals_list)
         leads.create_documents_folder()
-        # leads._send_to_external_api()
+        leads._send_to_external_api()
         return leads
