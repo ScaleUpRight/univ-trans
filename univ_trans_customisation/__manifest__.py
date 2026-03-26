@@ -12,6 +12,7 @@
         "views/crm_lead_view.xml",
         "views/sale_order_view.xml",
         "views/account_move_view.xml",
+        "views/res_config_settings.xml",
         "report/sale_order.xml",
     ],
     "installable": True,
