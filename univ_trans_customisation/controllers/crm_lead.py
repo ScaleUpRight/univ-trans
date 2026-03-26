@@ -8,7 +8,7 @@ _logger = logging.getLogger(__name__)
 
 class LeadWebhookController(http.Controller):
 
-    @http.route('/api/webhook/lead-update', type='json', auth='public', methods=['POST'], csrf=False)
+    @http.route('/api/webhook/lead-update', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def lead_update(self, **kwargs):
         try:
             data = request.get_json_data()
