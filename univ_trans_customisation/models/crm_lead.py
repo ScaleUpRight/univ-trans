@@ -133,5 +133,9 @@ class CrmLead(models.Model):
     def create(self, vals_list):
         leads = super().create(vals_list)
         leads.create_documents_folder()
-        leads._send_to_external_api()
+        # Get environment setting
+        env_mode = self.env['ir.config_parameter'].sudo().get_param('lead_webhook.env', default='test')
+        # Call only for test mode
+        if env_mode == 'test':
+            leads._send_to_external_api()
         return leads
