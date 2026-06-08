@@ -29,4 +29,25 @@
 
         </field>
     </record>
+
+    <!-- 2026-06-08: per-quote origin/destination CITY, editable on the quote
+         (Ilan, WhatsApp 2026-03-24). Placed right after the matching *_country
+         fields, which are injected by the Studio view (priority 160), so this
+         view uses a higher priority (200) to guarantee the anchors exist. -->
+    <record id="view_sale_order_form_inherit_city" model="ir.ui.view">
+        <field name="name">sale.order.form.shipment.city</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="priority">200</field>
+        <field name="arch" type="xml">
+            <field name="x_studio_moving_from_country" position="after">
+                <field name="x_studio_moving_from_city" string="Moving From City"
+                       force_save="1" readonly="not is_opportunity_fields_editable"/>
+            </field>
+            <field name="x_studio_move_to_country" position="after">
+                <field name="x_studio_move_to_city" string="Move To City"
+                       force_save="1" readonly="not is_opportunity_fields_editable"/>
+            </field>
+        </field>
+    </record>
 </odoo>

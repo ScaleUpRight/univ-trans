@@ -19,15 +19,22 @@ class SaleOrder(models.Model):
     )
 
     is_opportunity_fields_editable = fields.Boolean(
-        compute="_compute_is_opportunity_fields_editable", strore=True
+        compute="_compute_is_opportunity_fields_editable", store=True
     )
+
+    # Templates on which the shipment/opportunity fields (size, scope, countries,
+    # cities, booker type, ...) may be edited directly on the quote and on which
+    # the totals block is printed on the PDF.
+    # 2026-06-08: added 'Quote HHG' per client request (Ilan, WhatsApp 2026-05-25)
+    # so HHG quotes are editable just like Art/Commercial.
+    EDITABLE_QUOTE_TEMPLATES = ['Quote Art', 'Quote Commercial', 'Quote HHG']
 
     @api.depends('sale_order_template_id')
     def _compute_is_opportunity_fields_editable(self):
         for order in self:
-            order.is_opportunity_fields_editable = (
-                    order.sale_order_template_id
-                    and order.sale_order_template_id.name in ['Quote Art', 'Quote Commercial']
+            order.is_opportunity_fields_editable = bool(
+                order.sale_order_template_id
+                and order.sale_order_template_id.name in self.EDITABLE_QUOTE_TEMPLATES
             )
 
     x_studio_booker_type = fields.Selection(related='opportunity_id.x_studio_booker_type', readonly=False, store=True)
@@ -41,6 +48,11 @@ class SaleOrder(models.Model):
     x_studio_moving_from_country = fields.Char(compute='_compute_x_studio_moving_from_country', readonly=False, store=True)
     x_studio_moving_from_street_1 = fields.Char(compute='_compute_x_studio_moving_from_street_1', store=True)
     x_studio_move_to_country = fields.Char(compute='_compute_x_studio_move_to_country', readonly=False, store=True)
+    # 2026-06-08: per-quote ORIGIN/DESTINATION CITY (Ilan, WhatsApp 2026-03-24).
+    # Same pattern as the *_country fields above: defaults from the opportunity but
+    # can be overridden on the quote and is stored independently per quote.
+    x_studio_moving_from_city = fields.Char(compute='_compute_x_studio_moving_from_city', readonly=False, store=True)
+    x_studio_move_to_city = fields.Char(compute='_compute_x_studio_move_to_city', readonly=False, store=True)
 
     @api.depends('x_studio_service_scope', 'opportunity_id.x_studio_destination')
     def _compute_x_studio_destination(self):
@@ -95,6 +107,16 @@ class SaleOrder(models.Model):
     def _compute_x_studio_move_to_country(self):
         for order in self:
             order.x_studio_move_to_country = order.opportunity_id.x_studio_move_to_country
+
+    @api.depends('opportunity_id.x_studio_moving_from_city')
+    def _compute_x_studio_moving_from_city(self):
+        for order in self:
+            order.x_studio_moving_from_city = order.opportunity_id.x_studio_moving_from_city
+
+    @api.depends('opportunity_id.x_studio_move_to_city')
+    def _compute_x_studio_move_to_city(self):
+        for order in self:
+            order.x_studio_move_to_city = order.opportunity_id.x_studio_move_to_city
 
     @api.depends('opportunity_id.x_studio_shipment_direction')
     def _compute_x_studio_shipment_direction(self):

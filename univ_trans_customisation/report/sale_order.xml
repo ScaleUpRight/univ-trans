@@ -7,22 +7,27 @@
                 <span t-elif="doc.state in ['draft','sent']">Quotation # </span>
                 <span t-else="">Order # </span>
                 <span t-field="doc.name">SO0000</span>
-                <br/>
-                <t t-if="doc.opportunity_id.opportunity_file_id">
-                    <span style="font-size: 20px;">
-                    Opportunity ID:
-                    </span>
-                    <span style="font-size: 20px;" t-esc="doc.opportunity_id.opportunity_file_id"/>
-                </t>
+                <!-- 2026-06-08: Proposal Date + Expiration folded in from the live
+                     Studio edit (client 2026-05-27, "no date on the quotes") so a
+                     module upgrade no longer wipes them. -->
+                <div style="font-size: 15px; line-height: 1.8; color: black; margin-top: 6px;">
+                    <t t-if="doc.opportunity_id.opportunity_file_id">
+                        <div><strong>Opportunity ID:</strong> <span t-esc="doc.opportunity_id.opportunity_file_id"/></div>
+                    </t>
+                    <div><strong>Proposal Date:</strong> <span t-field="doc.date_order" t-options="{&quot;widget&quot;: &quot;date&quot;}"/></div>
+                    <t t-if="doc.validity_date">
+                        <div><strong>Expiration:</strong> <span t-field="doc.validity_date"/></div>
+                    </t>
+                </div>
             </t>
         </xpath>
 
         <xpath expr="//div[@id='informations']" position="before">
             <div class="row mb-4" id="informations">
                 <div class="col-6">
-                    <div t-if="doc.x_studio_moving_from_country or doc.opportunity_id.x_studio_moving_from_city" class="mb-2">
+                    <div t-if="doc.x_studio_moving_from_country or doc.x_studio_moving_from_city" class="mb-2">
                         <strong>Origin:</strong>
-                        <span t-esc="(doc.opportunity_id.x_studio_moving_from_city or '') + (', ' if doc.opportunity_id.x_studio_moving_from_city and doc.x_studio_moving_from_country else '') + (doc.x_studio_moving_from_country or '')"/>
+                        <span t-esc="(doc.x_studio_moving_from_city or '') + (', ' if doc.x_studio_moving_from_city and doc.x_studio_moving_from_country else '') + (doc.x_studio_moving_from_country or '')"/>
                     </div>
                     <div t-if="doc.opportunity_id.x_studio_commodity" class="mb-1">
                         <strong>Commodity:</strong>
@@ -48,9 +53,9 @@
 
                 <!-- RIGHT COLUMN -->
                 <div class="col-6">
-                    <div t-if="doc.x_studio_move_to_country or doc.opportunity_id.x_studio_move_to_city" class="mb-2">
+                    <div t-if="doc.x_studio_move_to_country or doc.x_studio_move_to_city" class="mb-2">
                         <strong>Destination:</strong>
-                        <span t-esc="(doc.opportunity_id.x_studio_move_to_city or '') + (', ' if doc.opportunity_id.x_studio_move_to_city and doc.x_studio_move_to_country else '') + (doc.x_studio_move_to_country or '')"/>
+                        <span t-esc="(doc.x_studio_move_to_city or '') + (', ' if doc.x_studio_move_to_city and doc.x_studio_move_to_country else '') + (doc.x_studio_move_to_country or '')"/>
                     </div>
                     <div t-if="doc.x_studio_estimated_transit_time" class="mb-2">
                         <strong>Transit Time:</strong>
