@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Add custom fields to task form Operations tab -->
+    <record id="view_task_form_ops_calendar" model="ir.ui.view">
+        <field name="name">project.task.form.ops.calendar</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page string="Operations" name="ops_details">
+                    <group>
+                        <group string="Job References">
+                            <field name="x_job_number"/>
+                            <field name="x_opportunity_id"/>
+                            <field name="x_sale_order_id"/>
+                        </group>
+                        <group string="Service Details">
+                            <field name="x_studio_service_type"/>
+                            <field name="x_region"/>
+                            <field name="x_service_address"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Scheduled Time">
+                            <field name="planned_date_begin" string="Start"/>
+                            <field name="date_deadline" string="End"/>
+                        </group>
+                    </group>
+                    <group string="Operational Notes">
+                        <field name="x_notes" nolabel="1" placeholder="Add notes about this job…"/>
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+    <!-- Add ops fields to calendar card -->
+    <record id="view_task_calendar_ops_calendar" model="ir.ui.view">
+        <field name="name">project.task.calendar.ops.calendar</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_calendar"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="x_opportunity_id" invisible="not x_opportunity_id"/>
+                <field name="x_sale_order_id" invisible="not x_sale_order_id"/>
+                <field name="x_studio_service_type" invisible="not x_studio_service_type"/>
+                <field name="x_service_address" invisible="not x_service_address"/>
+                <field name="x_notes" invisible="not x_notes"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Region and service type filters on task search -->
+    <record id="view_task_search_ops_calendar" model="ir.ui.view">
+        <field name="name">project.task.search.ops.calendar</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_search_form_base"/>
+        <field name="arch" type="xml">
+            <filter name="unassigned" position="before">
+                <filter string="Israel" name="filter_israel"
+                        domain="[('x_region', '=', 'israel')]"/>
+                <filter string="International" name="filter_international"
+                        domain="[('x_region', '=', 'international')]"/>
+                <separator/>
+                <filter string="Packing"  name="filter_packing"  domain="[('x_studio_service_type', '=', 'Packing')]"/>
+                <filter string="Pickup"   name="filter_pickup"   domain="[('x_studio_service_type', '=', 'Pickup')]"/>
+                <filter string="Delivery" name="filter_delivery" domain="[('x_studio_service_type', '=', 'Delivery')]"/>
+                <filter string="Survey"   name="filter_survey"   domain="[('x_studio_service_type', '=', 'Survey')]"/>
+                <filter string="Customs"  name="filter_customs"  domain="[('x_studio_service_type', '=', 'Customs')]"/>
+                <filter string="Storage"  name="filter_storage"  domain="[('x_studio_service_type', '=', 'Storage')]"/>
+                <filter string="Other"    name="filter_other"    domain="[('x_studio_service_type', '=', 'Other')]"/>
+                <separator/>
+            </filter>
+            <filter name="stage" position="after">
+                <filter string="Region"       name="group_region"       context="{'group_by': 'x_region'}"/>
+                <filter string="Service Type" name="group_service_type" context="{'group_by': 'x_studio_service_type'}"/>
+            </filter>
+        </field>
+    </record>
+
+    <!-- Custom fields in task list view -->
+    <record id="view_task_list_ops_calendar" model="ir.ui.view">
+        <field name="name">project.task.list.ops.calendar</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_tree2"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="x_opportunity_id" optional="show"/>
+                <field name="x_studio_service_type" optional="show"/>
+                <field name="x_region" optional="show"/>
+                <field name="x_sale_order_id" optional="show"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>
