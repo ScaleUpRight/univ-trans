@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <record id="email_template_job_confirmed" model="mail.template">
+            <field name="name">Operations Job - Confirmed</field>
+            <field name="model_id" ref="project.model_project_task"/>
+            <field name="subject">Service Confirmed: {{ object.x_sale_order_id.name or object.name }}</field>
+            <field name="email_to">{{ object.partner_id.email }}</field>
+            <field name="lang">{{ object.partner_id.lang }}</field>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html"><![CDATA[
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+    <p>Dear <t t-out="object.partner_id.name"/>,</p>
+    <p>Your service has been confirmed. Here are the details:</p>
+    <table style="width:100%; border-collapse:collapse; margin: 16px 0;">
+        <tr style="background:#f5f7fa;">
+            <td style="padding:10px; font-weight:bold; width:40%;">Job Reference</td>
+            <td style="padding:10px;"><t t-out="object.name"/></td>
+        </tr>
+        <tr>
+            <td style="padding:10px; font-weight:bold;">Sale Order</td>
+            <td style="padding:10px;"><t t-out="object.x_sale_order_id.name or '-'"/></td>
+        </tr>
+        <tr style="background:#f5f7fa;">
+            <td style="padding:10px; font-weight:bold;">Service Type</td>
+            <td style="padding:10px;"><t t-out="object.x_studio_service_type or '-'"/></td>
+        </tr>
+        <tr>
+            <td style="padding:10px; font-weight:bold;">Service Address</td>
+            <td style="padding:10px;"><t t-out="object.x_service_address or 'To be confirmed'"/></td>
+        </tr>
+        <tr style="background:#f5f7fa;">
+            <td style="padding:10px; font-weight:bold;">Scheduled Date</td>
+            <td style="padding:10px;"><t t-out="object.date_deadline or 'To be confirmed'"/></td>
+        </tr>
+    </table>
+    <p>If you have any questions, please contact us.</p>
+    <p>Universe Transit Team</p>
+</div>
+            ]]></field>
+        </record>
+
+    </data>
+</odoo>
