@@ -1,8 +1,8 @@
 {
     'name': 'Universe Transit - Operations Calendar',
-    'version': '1.0',
+    'version': '1.1',
     'category': 'Project',
-    'summary': 'Shared operations calendar — creates jobs from confirmed sale orders',
+    'summary': 'Shared operations calendar — generates per-activity jobs from confirmed sale orders',
     'author': 'Univ Trans',
     'depends': ['project', 'sale', 'mail', 'univ_trans_customisation'],
     'data': [

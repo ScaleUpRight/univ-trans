@@ -41,6 +41,10 @@
         <field name="model">project.task</field>
         <field name="inherit_id" ref="project.view_task_calendar"/>
         <field name="arch" type="xml">
+            <!-- Colour each calendar card by its activity type -->
+            <calendar position="attributes">
+                <attribute name="color">x_studio_service_type</attribute>
+            </calendar>
             <field name="partner_id" position="after">
                 <field name="x_opportunity_id" invisible="not x_opportunity_id"/>
                 <field name="x_sale_order_id" invisible="not x_sale_order_id"/>

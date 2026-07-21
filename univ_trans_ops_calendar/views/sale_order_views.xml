@@ -15,13 +15,6 @@
                     <field name="x_ops_task_count" widget="statinfo" string="Ops Job"/>
                 </button>
             </div>
-            <page name="other_information" position="after">
-                <page string="Operations" name="ops_calendar">
-                    <group string="Calendar Settings">
-                        <field name="x_ops_region"/>
-                    </group>
-                </page>
-            </page>
         </field>
     </record>
 
