@@ -7,13 +7,18 @@
                 <span t-elif="doc.state in ['draft','sent']">Quotation # </span>
                 <span t-else="">Order # </span>
                 <span t-field="doc.name">SO0000</span>
-                <br/>
-                <t t-if="doc.opportunity_id.opportunity_file_id">
-                    <span style="font-size: 20px;">
-                    Opportunity ID:
-                    </span>
-                    <span style="font-size: 20px;" t-esc="doc.opportunity_id.opportunity_file_id"/>
-                </t>
+                <div style="font-size: 15px; line-height: 1.8; color: black; margin-top: 6px;">
+                    <t t-if="doc.opportunity_id.opportunity_file_id">
+                        <div><strong>Opportunity ID:</strong> <span t-esc="doc.opportunity_id.opportunity_file_id"/></div>
+                    </t>
+                    <t t-if="doc.opportunity_id.partner_id">
+                        <div><strong>Opportunity:</strong> <span t-esc="doc.opportunity_id.partner_id.name"/></div>
+                    </t>
+                    <div><strong>Proposal Date:</strong> <span t-field="doc.date_order" t-options="{&quot;widget&quot;: &quot;date&quot;}"/></div>
+                    <t t-if="doc.validity_date">
+                        <div><strong>Expiration:</strong> <span t-field="doc.validity_date"/></div>
+                    </t>
+                </div>
             </t>
         </xpath>
 
@@ -45,8 +50,6 @@
                         <span t-field="doc.x_studio_shipment_direction"/>
                     </div>
                 </div>
-
-                <!-- RIGHT COLUMN -->
                 <div class="col-6">
                     <div t-if="doc.x_studio_move_to_country or doc.opportunity_id.x_studio_move_to_city" class="mb-2">
                         <strong>Destination:</strong>
@@ -61,7 +64,7 @@
                         <span t-field="doc.x_studio_freight_mode"/>
                     </div>
                     <div t-if="doc.x_studio_size" class="mb-2">
-                        <strong>Size:</strong>
+                        <strong>Shipping Mode:</strong>
                         <span t-field="doc.x_studio_size"/>
                     </div>
                 </div>
@@ -74,7 +77,6 @@
                     <div id="total" class="row mt-n3" name="total">
                         <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ms-auto">
                             <table class="o_total_table table table-borderless">
-                                <!-- Tax totals -->
                                 <t t-call="sale.document_tax_totals">
                                     <t t-set="tax_totals" t-value="doc.tax_totals"/>
                                     <t t-set="currency" t-value="doc.currency_id"/>
@@ -83,6 +85,20 @@
                         </div>
                     </div>
                 </div>
+            </t>
+        </xpath>
+
+        <xpath expr="//t[@t-set='address']" position="replace">
+            <t t-set="address">
+                <div class="mb-1">
+                    <span style="font-size:14px;">To: </span>
+                    <strong style="font-size:16px;" t-field="doc.partner_id.name"/>
+                </div>
+                <div class="mb-0" t-field="doc.partner_id" t-options="{'widget':'contact','fields':['address'],'no_marker':True}"/>
+                <p t-if="doc.partner_id.vat" class="mb-0">
+                    <t t-if="doc.company_id.account_fiscal_country_id.vat_label" t-out="doc.company_id.account_fiscal_country_id.vat_label"/>
+                    <t t-else="">Tax ID</t>: <span t-field="doc.partner_id.vat"/>
+                </p>
             </t>
         </xpath>
     </template>
