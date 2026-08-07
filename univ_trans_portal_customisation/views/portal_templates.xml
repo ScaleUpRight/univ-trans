@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Lists the documents filed under the order's Documents folder.
+
+        Restricted to members of the viewer group: an ordinary customer looking at
+        their own order must not start seeing the contents of its document folder,
+        which can hold internal paperwork.
+
+        `report_type` is checked so the block renders on the portal page but not in
+        the printed/PDF rendering of the same template.
+    -->
+    <template id="portal_order_documents" inherit_id="sale.sale_order_portal_content">
+        <xpath expr="//div[@id='informations']" position="after">
+            <t t-set="uv_documents"
+               t-value="sale_order.sudo().documents_file_ids.filtered(lambda d: d.type == 'binary')
+                        if request.env.user.has_group('univ_trans_portal_customisation.group_order_viewer')
+                        else request.env['documents.document']"/>
+            <div id="uv_order_documents" class="row" t-if="uv_documents and (not report_type or report_type == 'html')">
+                <div class="col-12 mb-4">
+                    <h5 class="mb-1">Documents</h5>
+                    <hr class="mt-1 mb-2"/>
+                    <ul class="list-unstyled mb-0">
+                        <li t-foreach="uv_documents" t-as="uv_doc" class="mb-1">
+                            <a t-attf-href="/my/orders/#{sale_order.id}/document/#{uv_doc.id}">
+                                <i class="fa fa-download me-1" role="img" aria-label="Download"/><span t-out="uv_doc.name"/>
+                            </a>
+                            <small class="text-muted ms-1" t-if="uv_doc.file_size">
+                                (<span t-out="uv_doc.file_size" t-options='{"widget": "binary_size"}'/>)
+                            </small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+    <!--
+        Trim the portal home for order viewers: they are an internal employee looking
+        across orders, not a customer, so invoices, addresses and connection settings
+        are noise.  "Your Orders" is deliberately left in place.
+
+        priority 99 so this is applied after sale (20) and account (30) have inserted
+        their cards - the nodes must already be in the arch for these xpaths to match.
+    -->
+    <template id="portal_my_home_order_viewer" inherit_id="portal.portal_my_home" priority="99">
+        <!-- Addresses + Connection & Security both live in this row -->
+        <xpath expr="//div[@id='portal_common_category']" position="attributes">
+            <attribute name="t-if">not request.env.user.has_group('univ_trans_portal_customisation.group_order_viewer')</attribute>
+        </xpath>
+        <!-- Your Invoices, without touching Your Orders in the same row -->
+        <xpath expr="//div[@id='portal_client_category']//t[@t-set='title'][text()='Your Invoices']/.." position="attributes">
+            <attribute name="t-if">not request.env.user.has_group('univ_trans_portal_customisation.group_order_viewer')</attribute>
+        </xpath>
+    </template>
+
+</odoo>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="group_order_viewer" model="res.groups">
+        <field name="name">Portal: All Confirmed Orders Viewer</field>
+        <field name="share" eval="True"/>
+        <field name="comment">Read-only portal access to every confirmed sales order and the documents
+            attached to it. Intended for a portal (non-internal) user who needs to look across all
+            confirmed orders rather than only their own.</field>
+    </record>
+
+    <!--
+        Record rules attached to different groups are OR'ed together, so this widens
+        what an order viewer can read without touching sale.sale_order_rule_portal.
+        Only perm_read is granted: for write/create/unlink the stock portal rule
+        (own records only) remains the only applicable rule, which makes this
+        read-only by construction rather than by convention.
+
+        The domain is pinned to state = 'sale' rather than [(1, '=', 1)] so that draft
+        and sent quotations stay unreadable even if a controller domain is bypassed.
+    -->
+    <record id="sale_order_rule_portal_all_confirmed" model="ir.rule">
+        <field name="name">Portal viewer: all confirmed sales orders (read-only)</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="domain_force">[('state', '=', 'sale')]</field>
+        <field name="groups" eval="[(4, ref('group_order_viewer'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="sale_order_line_rule_portal_all_confirmed" model="ir.rule">
+        <field name="name">Portal viewer: lines of all confirmed sales orders (read-only)</field>
+        <field name="model_id" ref="sale.model_sale_order_line"/>
+        <field name="domain_force">[('order_id.state', '=', 'sale')]</field>
+        <field name="groups" eval="[(4, ref('group_order_viewer'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+</odoo>
