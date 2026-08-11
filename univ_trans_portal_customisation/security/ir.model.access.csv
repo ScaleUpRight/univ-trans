@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_crm_lead_portal_viewer,crm.lead.portal.viewer,crm.model_crm_lead,univ_trans_portal_customisation.group_order_viewer,1,0,0,0

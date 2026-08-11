@@ -2,11 +2,12 @@
 <odoo>
 
     <record id="group_order_viewer" model="res.groups">
-        <field name="name">Portal: All Confirmed Orders Viewer</field>
+        <field name="name">Portal: Internal Viewer</field>
         <field name="share" eval="True"/>
-        <field name="comment">Read-only portal access to every confirmed sales order and the documents
-            attached to it. Intended for a portal (non-internal) user who needs to look across all
-            confirmed orders rather than only their own.</field>
+        <field name="comment">Read-only portal access to every confirmed sales order and every
+            opportunity, plus the documents attached to them. Intended for an employee who is kept
+            as a portal (non-internal) user, and so needs to look across all records rather than
+            only their own.</field>
     </record>
 
     <!--
@@ -34,6 +35,17 @@
         <field name="name">Portal viewer: lines of all confirmed sales orders (read-only)</field>
         <field name="model_id" ref="sale.model_sale_order_line"/>
         <field name="domain_force">[('order_id.state', '=', 'sale')]</field>
+        <field name="groups" eval="[(4, ref('group_order_viewer'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="crm_lead_rule_portal_viewer" model="ir.rule">
+        <field name="name">Portal viewer: all opportunities (read-only)</field>
+        <field name="model_id" ref="crm.model_crm_lead"/>
+        <field name="domain_force">[('type', '=', 'opportunity')]</field>
         <field name="groups" eval="[(4, ref('group_order_viewer'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>

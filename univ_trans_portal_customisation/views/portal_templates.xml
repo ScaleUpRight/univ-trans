@@ -55,4 +55,120 @@
         </xpath>
     </template>
 
+    <!-- ================= Opportunities ================= -->
+
+    <template id="portal_my_home_opportunity" inherit_id="portal.portal_my_home" priority="98">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
+            <t t-set="portal_client_category_enable" t-value="True"/>
+        </xpath>
+        <div id="portal_client_category" position="inside">
+            <t t-call="portal.portal_docs_entry"
+               t-if="request.env.user.has_group('univ_trans_portal_customisation.group_order_viewer')">
+                <t t-set="icon" t-value="'/univ_trans_portal_customisation/static/src/img/portal-opportunity.svg'"/>
+                <t t-set="title">Opportunities</t>
+                <t t-set="url" t-value="'/my/opportunities'"/>
+                <t t-set="text">Browse all opportunities</t>
+                <t t-set="placeholder_count" t-value="'opportunity_count'"/>
+            </t>
+        </div>
+    </template>
+
+    <template id="portal_breadcrumbs_opportunity" inherit_id="portal.portal_breadcrumbs" priority="40">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'opportunity'"
+                t-attf-class="breadcrumb-item #{'active ' if not lead else ''}">
+                <a t-if="lead" t-attf-href="/my/opportunities?{{ keep_query() }}">Opportunities</a>
+                <t t-else="">Opportunities</t>
+            </li>
+            <li t-if="page_name == 'opportunity' and lead" class="breadcrumb-item active">
+                <t t-out="lead.name"/>
+            </li>
+        </xpath>
+    </template>
+
+    <template id="portal_my_opportunities" name="My Opportunities">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Opportunities</t>
+            </t>
+
+            <div t-if="not opportunities" class="alert alert-warning" role="alert">
+                There are currently no opportunities.
+            </div>
+
+            <t t-if="opportunities" t-call="portal.portal_table">
+                <thead>
+                    <tr class="active">
+                        <th>Opportunity</th>
+                        <th>Customer</th>
+                        <th>Stage</th>
+                        <th class="text-end">Expected Revenue</th>
+                        <th class="text-end">Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="opportunities" t-as="opp">
+                        <td>
+                            <a t-attf-href="/my/opportunities/#{opp.id}"><span t-out="opp.name"/></a>
+                        </td>
+                        <td><span t-out="opp.partner_id.display_name"/></td>
+                        <td><span t-out="opp.stage_id.name"/></td>
+                        <td class="text-end"><span t-field="opp.expected_revenue"/></td>
+                        <td class="text-end">
+                            <span t-field="opp.create_date" t-options='{"widget": "date"}'/>
+                        </td>
+                    </tr>
+                </tbody>
+            </t>
+        </t>
+    </template>
+
+    <!--
+        Sections come from the controller, which derives them from the combined form
+        arch, so this template stays agnostic about which fields exist.  Values are
+        pre-formatted in Python; `t-out` renders Markup (html fields) unescaped and
+        escapes everything else.
+    -->
+    <template id="portal_opportunity_page" name="Opportunity">
+        <t t-call="portal.portal_layout">
+            <div class="row mb-3">
+                <div class="col-12">
+                    <h4 class="mb-0"><span t-out="lead.name"/></h4>
+                </div>
+            </div>
+
+            <div t-if="documents" class="mb-4">
+                <h5 class="mb-1">Documents</h5>
+                <hr class="mt-1 mb-2"/>
+                <ul class="list-unstyled mb-0">
+                    <li t-foreach="documents" t-as="uv_doc" class="mb-1">
+                        <a t-attf-href="/my/opportunities/#{lead.id}/document/#{uv_doc.id}">
+                            <i class="fa fa-download me-1" role="img" aria-label="Download"/>
+                            <span t-out="uv_doc.name"/>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <t t-foreach="sections" t-as="uv_section">
+                <div class="mb-4">
+                    <h5 t-if="uv_section[0]" class="mb-1"><span t-out="uv_section[0]"/></h5>
+                    <hr class="mt-1 mb-2"/>
+                    <table class="table table-sm table-borderless mb-0">
+                        <tbody>
+                            <tr t-foreach="uv_section[1]" t-as="uv_row">
+                                <th class="ps-0 text-muted fw-normal align-top" style="width: 30%;">
+                                    <span t-out="uv_row[0]"/>
+                                </th>
+                                <td class="text-wrap"><span t-out="uv_row[1]"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+
 </odoo>

@@ -16,9 +16,10 @@ rules added here grant `read` only, so writes still fall through to Odoo's
 restrictive stock portal rule.
     """,
     'category': 'Sales/Sales',
-    'depends': ['sale', 'documents', 'univ_trans_customisation'],
+    'depends': ['sale', 'crm', 'documents', 'univ_trans_customisation'],
     'data': [
         'security/security.xml',
+        'security/ir.model.access.csv',
         'views/portal_templates.xml',
     ],
     'license': 'LGPL-3',
