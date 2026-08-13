@@ -33,16 +33,73 @@ class CustomerPortal(CustomerPortal):
     # Sales orders
     # ------------------------------------------------------------------
 
+    def _order_searchbar_inputs(self):
+        return {
+            'all': {'input': 'all', 'label': _("Search in All"), 'sequence': 10},
+            'name': {'input': 'name', 'label': _("Search in Order Number"), 'sequence': 20},
+            'partner_id': {'input': 'partner_id', 'label': _("Search in Customer"), 'sequence': 30},
+        }
+
+    def _partner_search_leaf(self, search):
+        """Match records whose customer name contains `search`.
+
+        Not `('partner_id', 'ilike', search)`: that resolves through a subquery on
+        res.partner executed *as the current user*, and a portal user can read
+        almost no partners -- so the subquery returns nothing and the search comes
+        back empty even though the orders themselves are readable.  Resolving the
+        partner ids with sudo and matching on them keeps record-level security
+        where it actually matters (the order/opportunity rules still apply) while
+        letting the lookup succeed.
+        """
+        partner_ids = request.env['res.partner'].sudo()._search([('complete_name', 'ilike', search)])
+        return ('partner_id', 'in', partner_ids)
+
+    def _order_search_domain(self, search_in, search):
+        if not search:
+            return []
+        if search_in == 'name':
+            return [('name', 'ilike', search)]
+        if search_in == 'partner_id':
+            return [self._partner_search_leaf(search)]
+        return ['|', ('name', 'ilike', search), self._partner_search_leaf(search)]
+
     def _prepare_orders_domain(self, partner):
         """Order viewers browse every confirmed order, not only their own.
 
         This one override also fixes the /my portal home counter, which calls
         the same method (sale/controllers/portal.py).  `_prepare_quotations_domain`
         is deliberately left alone so /my/quotes stays personal-only.
+
+        The search terms are read from the request rather than taken as arguments
+        because sale builds the list domain and the pager total from this single
+        method; filtering here keeps the two in step, so the pager cannot end up
+        counting records the list is not showing.  On /my there are no search
+        params, so the home counter is unaffected.
         """
-        if self._is_order_viewer():
-            return [('state', '=', 'sale')]
-        return super()._prepare_orders_domain(partner)
+        if not self._is_order_viewer():
+            return super()._prepare_orders_domain(partner)
+
+        params = request.params or {}
+        return [('state', '=', 'sale')] + self._order_search_domain(
+            params.get('search_in') or 'all',
+            (params.get('search') or '').strip(),
+        )
+
+    def _prepare_sale_portal_rendering_values(
+        self, page=1, date_begin=None, date_end=None, sortby=None, quotation_page=False, **kwargs
+    ):
+        values = super()._prepare_sale_portal_rendering_values(
+            page=page, date_begin=date_begin, date_end=date_end,
+            sortby=sortby, quotation_page=quotation_page, **kwargs
+        )
+        # /my/quotes stays personal-only, so it gets no cross-customer search box.
+        if self._is_order_viewer() and not quotation_page:
+            values.update({
+                'searchbar_inputs': self._order_searchbar_inputs(),
+                'search_in': kwargs.get('search_in') or 'all',
+                'search': kwargs.get('search') or '',
+            })
+        return values
 
     @http.route(
         '/my/orders/<int:order_id>/document/<int:document_id>',
@@ -84,6 +141,28 @@ class CustomerPortal(CustomerPortal):
     def _prepare_opportunities_domain(self):
         return [('type', '=', 'opportunity')]
 
+    def _opportunity_searchbar_inputs(self):
+        return {
+            'all': {'input': 'all', 'label': _("Search in All"), 'sequence': 10},
+            'opportunity_file_id': {
+                'input': 'opportunity_file_id', 'label': _("Search in Opportunity ID"), 'sequence': 20,
+            },
+            'partner_id': {'input': 'partner_id', 'label': _("Search in Customer"), 'sequence': 30},
+        }
+
+    def _opportunity_search_domain(self, search_in, search):
+        if not search:
+            return []
+        if search_in == 'partner_id':
+            return [self._partner_search_leaf(search)]
+        if search_in == 'opportunity_file_id':
+            return [('opportunity_file_id', 'ilike', search)]
+        return [
+            '|',
+            self._partner_search_leaf(search),
+            ('opportunity_file_id', 'ilike', search),
+        ]
+
     def _prepare_home_portal_values(self, counters):
         values = super()._prepare_home_portal_values(counters)
         if 'opportunity_count' in counters:
@@ -97,12 +176,15 @@ class CustomerPortal(CustomerPortal):
         ['/my/opportunities', '/my/opportunities/page/<int:page>'],
         type='http', auth='user', website=True,
     )
-    def portal_my_opportunities(self, page=1, sortby=None, **kw):
+    def portal_my_opportunities(self, page=1, sortby=None, search=None, search_in='all', **kw):
         if not self._is_order_viewer():
             raise request.not_found()
 
         Lead = request.env['crm.lead']
-        domain = self._prepare_opportunities_domain()
+        search = (search or '').strip()
+        if search_in not in self._opportunity_searchbar_inputs():
+            search_in = 'all'
+        domain = self._prepare_opportunities_domain() + self._opportunity_search_domain(search_in, search)
         searchbar_sortings = {
             'date': {'label': _("Newest"), 'order': 'create_date desc'},
             'name': {'label': _("Name"), 'order': 'name'},
@@ -116,7 +198,8 @@ class CustomerPortal(CustomerPortal):
             total=Lead.search_count(domain),
             page=page,
             step=self._items_per_page,
-            url_args={'sortby': sortby},
+            # carried so paging past page 1 keeps the active search
+            url_args={'sortby': sortby, 'search': search, 'search_in': search_in},
         )
         leads = Lead.search(
             domain,
@@ -135,6 +218,9 @@ class CustomerPortal(CustomerPortal):
             'default_url': '/my/opportunities',
             'searchbar_sortings': searchbar_sortings,
             'sortby': sortby,
+            'searchbar_inputs': self._opportunity_searchbar_inputs(),
+            'search_in': search_in,
+            'search': search,
         })
         return request.render('univ_trans_portal_customisation.portal_my_opportunities', values)
 

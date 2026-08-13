@@ -55,6 +55,26 @@
         </xpath>
     </template>
 
+    <!--
+        A Customer column on the orders list: an ordinary portal user only ever sees
+        their own orders, so stock Odoo has no such column, but a viewer looking
+        across every customer needs it - and it is one of the search fields, so the
+        list should show what is being searched.  `orders` is already a sudo
+        recordset in sale's controller, so partner_id reads fine.
+    -->
+    <template id="portal_my_orders_customer" inherit_id="sale.portal_my_orders" priority="99">
+        <xpath expr="//thead/tr/th[1]" position="after">
+            <th t-if="request.env.user.has_group('univ_trans_portal_customisation.group_order_viewer')">
+                Customer
+            </th>
+        </xpath>
+        <xpath expr="//t[@t-foreach='orders']/tr/td[1]" position="after">
+            <td t-if="request.env.user.has_group('univ_trans_portal_customisation.group_order_viewer')">
+                <span t-out="order.partner_id.display_name"/>
+            </td>
+        </xpath>
+    </template>
+
     <!-- ================= Opportunities ================= -->
 
     <template id="portal_my_home_opportunity" inherit_id="portal.portal_my_home" priority="98">
@@ -101,21 +121,21 @@
             <t t-if="opportunities" t-call="portal.portal_table">
                 <thead>
                     <tr class="active">
+                        <th>Opportunity ID</th>
                         <th>Opportunity</th>
                         <th>Customer</th>
                         <th>Stage</th>
-                        <th class="text-end">Expected Revenue</th>
                         <th class="text-end">Created</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr t-foreach="opportunities" t-as="opp">
+                        <td><span t-out="opp.opportunity_file_id"/></td>
                         <td>
                             <a t-attf-href="/my/opportunities/#{opp.id}"><span t-out="opp.name"/></a>
                         </td>
                         <td><span t-out="opp.partner_id.display_name"/></td>
                         <td><span t-out="opp.stage_id.name"/></td>
-                        <td class="text-end"><span t-field="opp.expected_revenue"/></td>
                         <td class="text-end">
                             <span t-field="opp.create_date" t-options='{"widget": "date"}'/>
                         </td>
