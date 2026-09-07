@@ -92,7 +92,7 @@
             <t t-set="address">
                 <div class="mb-1">
                     <span style="font-size:14px;">To: </span>
-                    <strong style="font-size:16px;" t-field="doc.partner_id.name"/>
+                    <strong style="font-size:16px;" t-field="doc.partner_id.display_name"/>
                 </div>
                 <div class="mb-0" t-field="doc.partner_id" t-options="{'widget':'contact','fields':['address'],'no_marker':True}"/>
                 <p t-if="doc.partner_id.vat" class="mb-0">
