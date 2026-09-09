@@ -32,7 +32,10 @@ class SaleOrder(models.Model):
 
     x_studio_booker_type = fields.Selection(related='opportunity_id.x_studio_booker_type', readonly=False, store=True)
     x_studio_service_scope = fields.Selection(related='opportunity_id.x_studio_service_scope', readonly=False, store=True)
-    x_studio_freight_mode = fields.Selection(related='opportunity_id.x_studio_freight_mode', readonly=False, store=True)
+    x_studio_freight_mode = fields.Selection(
+        selection=lambda self: self.env['crm.lead']._fields['x_studio_freight_mode']._description_selection(self.env),
+        string="Freight Mode",
+    )
     x_studio_size = fields.Selection(related='opportunity_id.x_studio_size', readonly=False, store=True)
     x_studio_destination = fields.Boolean(compute='_compute_x_studio_destination', store=True, string="Destination")
     x_studio_freight = fields.Boolean(compute='_compute_x_studio_freight', store=True, string="Freight")
@@ -41,6 +44,27 @@ class SaleOrder(models.Model):
     x_studio_moving_from_country = fields.Char(compute='_compute_x_studio_moving_from_country', readonly=False, store=True)
     x_studio_moving_from_street_1 = fields.Char(compute='_compute_x_studio_moving_from_street_1', store=True)
     x_studio_move_to_country = fields.Char(compute='_compute_x_studio_move_to_country', readonly=False, store=True)
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Seed Freight Mode from the opportunity when the quotation is created."""
+        for vals in vals_list:
+            if vals.get('x_studio_freight_mode'):
+                continue
+            lead_id = vals.get('opportunity_id') or self.env.context.get('default_opportunity_id')
+            if lead_id:
+                mode = self.env['crm.lead'].browse(lead_id).x_studio_freight_mode
+                if mode:
+                    vals['x_studio_freight_mode'] = mode
+        return super().create(vals_list)
+
+    @api.onchange('opportunity_id')
+    def _onchange_opportunity_id_freight_mode(self):
+        """Re-seed Freight Mode when the opportunity is picked or swapped on the form."""
+        for order in self:
+            mode = order.opportunity_id.x_studio_freight_mode
+            if mode:
+                order.x_studio_freight_mode = mode
 
     @api.depends('x_studio_service_scope', 'opportunity_id.x_studio_destination')
     def _compute_x_studio_destination(self):
