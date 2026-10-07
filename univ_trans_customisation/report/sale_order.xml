@@ -14,9 +14,9 @@
                     <t t-if="doc.opportunity_id.partner_id">
                         <div><strong>Opportunity:</strong> <span t-esc="doc.opportunity_id.partner_id.name"/></div>
                     </t>
-                    <div><strong>Proposal Date:</strong> <span t-field="doc.date_order" t-options="{&quot;widget&quot;: &quot;date&quot;, &quot;format&quot;: &quot;dd/MM/yyyy&quot;}"/></div>
+                    <div><strong>Proposal Date:</strong> <span t-field="doc.date_order" t-options="{&quot;widget&quot;: &quot;date&quot;}"/></div>
                     <t t-if="doc.validity_date">
-                        <div><strong>Expiration:</strong> <span t-field="doc.validity_date" t-options="{&quot;format&quot;: &quot;dd/MM/yyyy&quot;}"/></div>
+                        <div><strong>Expiration:</strong> <span t-field="doc.validity_date"/></div>
                     </t>
                 </div>
             </t>

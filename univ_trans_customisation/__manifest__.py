@@ -1,6 +1,6 @@
 {
     "name": "Univ Trans Customisation",
-    "version": "1.1",
+    "version": "1.2",
     "category": "CRM",
     "summary": "Adds Opportunity File ID with sequence",
     "description": "Adds a unique, persistent Opportunity File ID generated using Odoo sequence.",
